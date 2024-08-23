@@ -5,10 +5,10 @@ interface ConfirmationCodeProps {
 }
 
 export const PreviewProps = {
-    validationCode: '424-242',
+    validationCode: '42424242',
 } as ConfirmationCodeProps;
 
-export const TemplateName = 'Airbnb Review';
+export const TemplateName = 'Confirmation Code';
 
 export const Template = ({ validationCode }: ConfirmationCodeProps) => (
     <Html>
