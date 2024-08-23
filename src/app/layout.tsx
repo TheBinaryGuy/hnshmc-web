@@ -27,11 +27,11 @@ export const viewport: Viewport = {
 
 export const metadata: Metadata = {
     title: {
-        default: 'Hono x Lucia',
+        default: 'HNS HMC',
         template: '%s',
     },
-    keywords: ['hono', 'lucia', 'next.js', 'react'],
-    description: 'Hono x Lucia',
+    keywords: ['HNS HMC'],
+    description: 'HNS HMC',
     robots: {
         index: true,
         follow: true,

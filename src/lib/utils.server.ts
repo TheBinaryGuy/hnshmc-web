@@ -2,15 +2,10 @@ import 'server-only';
 
 import { Template as ConfirmationCode } from '@/emails/confirmation-code';
 import { serverEnvs } from '@/env/server';
-import { Routes } from '@/lib/routes';
 import { lucia } from '@/services/auth';
-import { db } from '@/services/db';
-import { emailVerificationCodes } from '@/services/db/schema';
-import { hash, verify } from '@node-rs/argon2';
-import { eq } from 'drizzle-orm';
+import prisma from '@/services/db';
 import { render } from 'jsx-email';
 import { cookies } from 'next/headers';
-import { redirect } from 'next/navigation';
 import { createTransport } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { createDate, isWithinExpirationDate, TimeSpan } from 'oslo';
@@ -25,15 +20,6 @@ export const getUser = cache(async () => {
     const { user } = await lucia.validateSession(sessionId);
     return user;
 });
-
-export async function ensureAuthenticated() {
-    const user = await getUser();
-    if (!user) {
-        throw redirect(Routes.login());
-    }
-
-    return user;
-}
 
 function getSmtpTransporter() {
     const requiresAuth =
@@ -95,47 +81,36 @@ export async function sendVerificationCode(emailAddress: string, code: string) {
 }
 
 export async function generateEmailVerificationCode(userId: string): Promise<string> {
-    const existingCode = await db
-        .select({ code: emailVerificationCodes.code, expiresAt: emailVerificationCodes.expiresAt })
-        .from(emailVerificationCodes)
-        .where(eq(emailVerificationCodes.userId, userId));
+    const existingCode = await prisma.appEmailVerificationCodes.findFirst({
+        select: {
+            code: true,
+            expiresAt: true,
+        },
+        where: {
+            userId,
+        },
+    });
 
-    if (existingCode.length > 0 && isWithinExpirationDate(existingCode[0]!.expiresAt)) {
-        return existingCode[0]!.code;
+    if (existingCode !== null && isWithinExpirationDate(existingCode.expiresAt)) {
+        return existingCode.code;
     }
 
     const code = generateRandomString(8, alphabet('0-9'));
-    if (existingCode.length > 0) {
-        await db.delete(emailVerificationCodes).where(eq(emailVerificationCodes.userId, userId));
+    if (existingCode) {
+        await prisma.appEmailVerificationCodes.deleteMany({
+            where: {
+                userId,
+            },
+        });
     }
 
-    await db.insert(emailVerificationCodes).values({
-        userId,
-        code,
-        expiresAt: createDate(new TimeSpan(5, 'm')),
+    await prisma.appEmailVerificationCodes.create({
+        data: {
+            userId,
+            code,
+            expiresAt: createDate(new TimeSpan(5, 'm')),
+        },
     });
 
     return code;
-}
-
-export async function verifyHash(hash: string, password: string) {
-    const success = await verify(hash, password, {
-        memoryCost: 19456,
-        timeCost: 2,
-        outputLen: 32,
-        parallelism: 1,
-    });
-
-    return success;
-}
-
-export async function hashPassword(password: string) {
-    const passwordHash = await hash(password, {
-        memoryCost: 19456,
-        timeCost: 2,
-        outputLen: 32,
-        parallelism: 1,
-    });
-
-    return passwordHash;
 }

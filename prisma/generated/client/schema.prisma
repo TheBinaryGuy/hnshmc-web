@@ -1,0 +1,703 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "./generated/client"
+}
+
+generator zod {
+  provider         = "zod-prisma-types"
+  output           = "./generated/zod"
+  createInputTypes = false
+}
+
+datasource db {
+  provider = "sqlserver"
+  url      = env("DATABASE_URL")
+}
+
+model AppUser {
+  id        String @id
+  studentId BigInt
+
+  student                   tblStudent                  @relation(references: [StudentIDP], fields: [studentId], onDelete: Cascade)
+  appSessions               AppSession[]
+  appEmailVerificationCodes AppEmailVerificationCodes[]
+}
+
+model AppSession {
+  id        String   @id
+  userId    String
+  expiresAt DateTime
+
+  appUser AppUser @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model AppEmailVerificationCodes {
+  id        BigInt   @id @default(autoincrement())
+  code      String   @db.VarChar(8)
+  expiresAt DateTime
+  userId    String
+
+  appUser AppUser @relation(references: [id], fields: [userId], onDelete: Cascade)
+}
+
+model PassFail {
+  BatchID   Float?
+  Sr_No_    Float?  @map("Sr No#")
+  NAME      String? @db.NVarChar(255)
+  TERM_FEE  Float?  @map("TERM FEE")
+  STRUCTURE Float?  @map("   STRUCTURE")
+  TOTAL_FEE Float?  @map("TOTAL FEE")
+  DEPOSIT   Float?
+  F8        String? @db.NVarChar(255)
+  Result_1  String? @db.NVarChar(255)
+  Result_2  String? @db.NVarChar(255)
+  Result_3  String? @db.NVarChar(255)
+  Result_4  String? @db.NVarChar(255)
+
+  @@map("__PassFail")
+  @@ignore
+}
+
+model AllStudent_v1 {
+  YearA                 String?   @db.NVarChar(255)
+  SrNo                  Float?
+  NAME                  String?   @db.NVarChar(255)
+  MobileNo              Float?
+  EMAIL                 String?   @db.NVarChar(255)
+  CurrentYear           String?   @db.NVarChar(255)
+  CuurentYearID         Int?
+  IsActive              Boolean?
+  EnrollmentNo          BigInt?
+  TERM_FEE              Float?
+  STRUCTURE             Float?
+  TOTAL_FEE             Float?
+  DEPOSIT_REFUNDAVLE    Float?
+  DEPOSIT_RECEIVED      Float?
+  TERM_1AMOUNT          Float?    @map("TERM-1AMOUNT")
+  TERM_1DATE            String?   @map("TERM-1DATE") @db.NVarChar(255)
+  TERM_1DETAIL          Float?    @map("TERM-1DETAIL")
+  TERM_1AMOUNT1         Float?    @map("TERM-1AMOUNT1")
+  TERM_1DATE2           DateTime? @map("TERM-1DATE2") @db.DateTime
+  TERM_1DETAIL1         Float?    @map("TERM-1DETAIL1")
+  TERM_1Due_TOTAL       Float?    @map("TERM-1Due_TOTAL")
+  TERM_2AMOUNT          Float?    @map("TERM-2AMOUNT")
+  TERM_2DATE            String?   @map("TERM-2DATE") @db.NVarChar(255)
+  TERM_2DETAIL          Float?    @map("TERM-2DETAIL")
+  TERM_2AMOUNT1         Float?    @map("TERM-2AMOUNT1")
+  TERM_2DATE2           DateTime? @map("TERM-2DATE2") @db.DateTime
+  TERM_2DETAIL1         Float?    @map("TERM-2DETAIL1")
+  TERM_2Due_TOTAL       Float?    @map("TERM-2Due_TOTAL")
+  TERM_3AMOUNT          Float?    @map("TERM-3AMOUNT")
+  TERM_3DATE            String?   @map("TERM-3DATE") @db.NVarChar(255)
+  TERM_3DETAIL          Float?    @map("TERM-3DETAIL")
+  TERM_3AMOUNT1         Float?    @map("TERM-3AMOUNT1")
+  TERM_3DATE2           String?   @map("TERM-3DATE2") @db.NVarChar(255)
+  TERM_3DETAIL1         Float?    @map("TERM-3DETAIL1")
+  TERM_3Due_TOTAL       Float?    @map("TERM-3Due_TOTAL")
+  TERM_4AMOUNT          Float?    @map("TERM-4AMOUNT")
+  TERM_4DATE            String?   @map("TERM-4DATE") @db.NVarChar(255)
+  TERM_4DETAIL          Float?    @map("TERM-4DETAIL")
+  TERM_4AMOUNT1         Float?    @map("TERM-4AMOUNT1")
+  TERM_4DATE2           String?   @map("TERM-4DATE2") @db.NVarChar(255)
+  TERM_4DETAIL1         Float?    @map("TERM-4DETAIL1")
+  TERM_4Due_TOTAL       Float?    @map("TERM-4Due_TOTAL")
+  TERM_5AMOUNT          Float?    @map("TERM-5AMOUNT")
+  TERM_5DATE            String?   @map("TERM-5DATE") @db.NVarChar(255)
+  TERM_5DETAIL          Float?    @map("TERM-5DETAIL")
+  TERM_5AMOUNT1         Float?    @map("TERM-5AMOUNT1")
+  TERM_5DATE2           String?   @map("TERM-5DATE2") @db.NVarChar(255)
+  TERM_5DETAIL1         Float?    @map("TERM-5DETAIL1")
+  TERM_5Due_TOTAL       Float?    @map("TERM-5Due_TOTAL")
+  TERM_6AMOUNT          Float?    @map("TERM-6AMOUNT")
+  TERM_6DATE            String?   @map("TERM-6DATE") @db.NVarChar(255)
+  TERM_6DETAIL          Float?    @map("TERM-6DETAIL")
+  TERM_6AMOUNT1         Float?    @map("TERM-6AMOUNT1")
+  TERM_6DATE2           String?   @map("TERM-6DATE2") @db.NVarChar(255)
+  TERM_6DETAIL1         Float?    @map("TERM-6DETAIL1")
+  TERM_6Due_TOTAL       Float?    @map("TERM-6Due_TOTAL")
+  TERM_7AMOUNT          Float?    @map("TERM-7AMOUNT")
+  TERM_7DATE            String?   @map("TERM-7DATE") @db.NVarChar(255)
+  TERM_7DETAIL          Float?    @map("TERM-7DETAIL")
+  TERM_7AMOUNT1         Float?    @map("TERM-7AMOUNT1")
+  TERM_7DATE2           String?   @map("TERM-7DATE2") @db.NVarChar(255)
+  TERM_7DETAIL1         Float?    @map("TERM-7DETAIL1")
+  TERM_7Due_TOTAL       Float?    @map("TERM-7Due_TOTAL")
+  TERM_8AMOUNT1         Float?    @map("TERM-8AMOUNT1")
+  TERM_8DATE            String?   @map("TERM-8DATE") @db.NVarChar(255)
+  TERM_8DETAIL          Float?    @map("TERM-8DETAIL")
+  TERM_8AMOUNT          Float?    @map("TERM-8AMOUNT")
+  TERM_8DATE2           DateTime? @map("TERM-8DATE2") @db.DateTime
+  TERM_8DETAIL1         Float?    @map("TERM-8DETAIL1")
+  TERM_8Due_TOTAL       Float?    @map("TERM-8Due_TOTAL")
+  TERM_9AMOUNT          Float?    @map("TERM-9AMOUNT")
+  TERM_9DATE            String?   @map("TERM-9DATE") @db.NVarChar(255)
+  TERM_9DETAIL          Float?    @map("TERM-9DETAIL")
+  TERM_9AMOUNT1         Float?    @map("TERM-9AMOUNT1")
+  TERM_9DATE2           String?   @map("TERM-9DATE2") @db.NVarChar(255)
+  TERM_9DETAIL1         Float?    @map("TERM-9DETAIL1")
+  TERM_9Due_TOTAL       Float?    @map("TERM-9Due_TOTAL")
+  TOTAL_FEES___RECEIVED Float?    @map("TOTAL_FEES  _RECEIVED")
+  TOTAL_FEES_PENDING    Float?
+
+  @@map("_AllStudent_v1")
+  @@ignore
+}
+
+model finalAllBatchStudentsData {
+  Batch       String? @db.NVarChar(255)
+  SrNo        Float?
+  StudentName String? @db.NVarChar(255)
+  Quata       String? @db.NVarChar(255)
+  CurrentYear String? @db.NVarChar(255)
+  Remarks     Float?
+
+  @@map("_finalAllBatchStudentsData")
+  @@ignore
+}
+
+model HnsAllBatchStdents {
+  BatchYear                  String?   @db.NVarChar(255)
+  SrNo                       Float?
+  StudentName                String?   @db.NVarChar(255)
+  TermFee                    Float?
+  Structure                  Float?
+  TotalFee                   Float?
+  Deposit                    Float?
+  Year1                      String?   @db.NVarChar(255)
+  Year2                      String?   @db.NVarChar(255)
+  Year3                      String?   @db.NVarChar(255)
+  Year4                      String?   @db.NVarChar(255)
+  DepositReceived            Float?
+  Term1Amount                String?   @db.NVarChar(255)
+  Term1Date                  String?   @db.NVarChar(255)
+  Term1Detail                String?   @db.NVarChar(255)
+  Term1Amount1               Float?
+  Term1Date1                 String?   @db.NVarChar(255)
+  Term1Detail1               String?   @db.NVarChar(255)
+  Term1Due                   Float?
+  Term2Amount                String?   @db.NVarChar(255)
+  Term2Date                  String?   @db.NVarChar(255)
+  Term2Details               String?   @db.NVarChar(255)
+  Term2Amount1               Float?
+  Term2Date1                 String?   @db.NVarChar(255)
+  Term2Details1              String?   @db.NVarChar(255)
+  Term2Due                   Float?
+  RecevedOrNotInYear1        Float?    @map(" RecevedOrNotInYear1")
+  Term3Amount                String?   @db.NVarChar(255)
+  Term3Date                  String?   @db.NVarChar(255)
+  Term3Details               String?   @db.NVarChar(255)
+  Term3Amount1               Float?
+  Term3Date1                 DateTime? @db.DateTime
+  Term3Details1              String?   @db.NVarChar(255)
+  Term3Due                   Float?
+  Term4Amount                String?   @db.NVarChar(255)
+  Term4Date                  String?   @db.NVarChar(255)
+  Term4Details               String?   @db.NVarChar(255)
+  Term4Amount1               Float?
+  Term4Date1                 DateTime? @db.DateTime
+  Term4Details1              String?   @db.NVarChar(255)
+  Term4Due                   Float?
+  RecevedOrNotInYear2        Float?    @map(" RecevedOrNotInYear2")
+  Term5Amount                String?   @db.NVarChar(255)
+  Term5Date                  String?   @db.NVarChar(255)
+  Term5Details               String?   @db.NVarChar(255)
+  Term5Amount1               Float?
+  Term5Date1                 DateTime? @db.DateTime
+  Term5Details1              String?   @db.NVarChar(255)
+  Term5Due                   Float?
+  Term6Amount                String?   @db.NVarChar(255)
+  Term6Date                  DateTime? @db.DateTime
+  Term6Details               String?   @db.NVarChar(255)
+  Term6Amount1               Float?
+  Term6Date1                 DateTime? @db.DateTime
+  Term6Details1              String?   @db.NVarChar(255)
+  Term6Due                   Float?
+  RecevedOrNotInYear3        Float?    @map(" RecevedOrNotInYear3")
+  Term7Amount                String?   @db.NVarChar(255)
+  Term7Date                  DateTime? @db.DateTime
+  Term7Details               String?   @db.NVarChar(255)
+  Term7Amount1               Float?
+  Term7Date1                 DateTime? @db.DateTime
+  Term7Details1              String?   @db.NVarChar(255)
+  Term7Due                   Float?
+  Term8Amount                String?   @db.NVarChar(255)
+  Term8Date                  DateTime? @db.DateTime
+  Term8Details               String?   @db.NVarChar(255)
+  Term8Amount1               Float?
+  Term8Date1                 DateTime? @db.DateTime
+  Term8Details1              String?   @db.NVarChar(255)
+  Term8Due                   Float?
+  Term9Amount                Float?
+  Term9Date                  DateTime? @db.DateTime
+  Term9Details               String?   @db.NVarChar(255)
+  Term9Amount1               String?   @db.NVarChar(255)
+  Term9Date1                 DateTime? @db.DateTime
+  Term9Details1              String?   @db.NVarChar(255)
+  Term9Duue                  Float?
+  RecevedOrNotInYear4_22to24 Float?    @map(" RecevedOrNotInYear4_22to24")
+
+  @@map("_HnsAllBatchStdents")
+  @@ignore
+}
+
+model V2 {
+  IDP                   Float?
+  YearA                 String? @db.NVarChar(255)
+  SrNo                  Float?
+  NAME                  String? @db.NVarChar(255)
+  MobileNo              Float?
+  EMAIL                 String? @db.NVarChar(255)
+  CurrentYear           String? @db.NVarChar(255)
+  EnrollmentNo          Float?
+  TERM_FEE              Float?
+  STRUCTURE             Float?
+  TOTAL_FEE             Float?
+  DEPOSIT_REFUNDAVLE    Float?
+  DEPOSIT_RECEIVED      Float?
+  TERM_1AMOUNT          Float?  @map("TERM-1AMOUNT")
+  TERM_1DATE            String? @map("TERM-1DATE") @db.NVarChar(255)
+  TERM_1DETAIL          String? @map("TERM-1DETAIL") @db.NVarChar(255)
+  TERM_1AMOUNT1         String? @map("TERM-1AMOUNT1") @db.NVarChar(255)
+  TERM_1DATE2           String? @map("TERM-1DATE2") @db.NVarChar(255)
+  TERM_1DETAIL1         String? @map("TERM-1DETAIL1") @db.NVarChar(255)
+  TERM_1Due_TOTAL       Float?  @map("TERM-1Due_TOTAL")
+  TERM_2AMOUNT          Float?  @map("TERM-2AMOUNT")
+  TERM_2DATE            String? @map("TERM-2DATE") @db.NVarChar(255)
+  TERM_2DETAIL          String? @map("TERM-2DETAIL") @db.NVarChar(255)
+  TERM_2AMOUNT1         String? @map("TERM-2AMOUNT1") @db.NVarChar(255)
+  TERM_2DATE2           String? @map("TERM-2DATE2") @db.NVarChar(255)
+  TERM_2DETAIL1         String? @map("TERM-2DETAIL1") @db.NVarChar(255)
+  TERM_2Due_TOTAL       Float?  @map("TERM-2Due_TOTAL")
+  TERM_3AMOUNT          Float?  @map("TERM-3AMOUNT")
+  TERM_3DATE            String? @map("TERM-3DATE") @db.NVarChar(255)
+  TERM_3DETAIL          String? @map("TERM-3DETAIL") @db.NVarChar(255)
+  TERM_3AMOUNT1         Float?  @map("TERM-3AMOUNT1")
+  TERM_3DATE2           String? @map("TERM-3DATE2") @db.NVarChar(255)
+  TERM_3DETAIL1         String? @map("TERM-3DETAIL1") @db.NVarChar(255)
+  TERM_3Due_TOTAL       Float?  @map("TERM-3Due_TOTAL")
+  TERM_4AMOUNT          Float?  @map("TERM-4AMOUNT")
+  TERM_4DATE            String? @map("TERM-4DATE") @db.NVarChar(255)
+  TERM_4DETAIL          String? @map("TERM-4DETAIL") @db.NVarChar(255)
+  TERM_4AMOUNT1         Float?  @map("TERM-4AMOUNT1")
+  TERM_4DATE2           String? @map("TERM-4DATE2") @db.NVarChar(255)
+  TERM_4DETAIL1         String? @map("TERM-4DETAIL1") @db.NVarChar(255)
+  TERM_4Due_TOTAL       Float?  @map("TERM-4Due_TOTAL")
+  TERM_5AMOUNT          Float?  @map("TERM-5AMOUNT")
+  TERM_5DATE            String? @map("TERM-5DATE") @db.NVarChar(255)
+  TERM_5DETAIL          String? @map("TERM-5DETAIL") @db.NVarChar(255)
+  TERM_5AMOUNT1         Float?  @map("TERM-5AMOUNT1")
+  TERM_5DATE2           String? @map("TERM-5DATE2") @db.NVarChar(255)
+  TERM_5DETAIL1         String? @map("TERM-5DETAIL1") @db.NVarChar(255)
+  TERM_5Due_TOTAL       Float?  @map("TERM-5Due_TOTAL")
+  TERM_6AMOUNT          Float?  @map("TERM-6AMOUNT")
+  TERM_6DATE            String? @map("TERM-6DATE") @db.NVarChar(255)
+  TERM_6DETAIL          String? @map("TERM-6DETAIL") @db.NVarChar(255)
+  TERM_6AMOUNT1         Float?  @map("TERM-6AMOUNT1")
+  TERM_6DATE2           String? @map("TERM-6DATE2") @db.NVarChar(255)
+  TERM_6DETAIL1         String? @map("TERM-6DETAIL1") @db.NVarChar(255)
+  TERM_6Due_TOTAL       Float?  @map("TERM-6Due_TOTAL")
+  TERM_7AMOUNT          Float?  @map("TERM-7AMOUNT")
+  TERM_7DATE            String? @map("TERM-7DATE") @db.NVarChar(255)
+  TERM_7DETAIL          String? @map("TERM-7DETAIL") @db.NVarChar(255)
+  TERM_7AMOUNT1         Float?  @map("TERM-7AMOUNT1")
+  TERM_7DATE2           String? @map("TERM-7DATE2") @db.NVarChar(255)
+  TERM_7DETAIL1         String? @map("TERM-7DETAIL1") @db.NVarChar(255)
+  TERM_7Due_TOTAL       Float?  @map("TERM-7Due_TOTAL")
+  TERM_8AMOUNT1         Float?  @map("TERM-8AMOUNT1")
+  TERM_8DATE            String? @map("TERM-8DATE") @db.NVarChar(255)
+  TERM_8DETAIL          String? @map("TERM-8DETAIL") @db.NVarChar(255)
+  TERM_8AMOUNT          String? @map("TERM-8AMOUNT") @db.NVarChar(255)
+  TERM_8DATE2           String? @map("TERM-8DATE2") @db.NVarChar(255)
+  TERM_8DETAIL1         String? @map("TERM-8DETAIL1") @db.NVarChar(255)
+  TERM_8Due_TOTAL       Float?  @map("TERM-8Due_TOTAL")
+  TERM_9AMOUNT          Float?  @map("TERM-9AMOUNT")
+  TERM_9DATE            String? @map("TERM-9DATE") @db.NVarChar(255)
+  TERM_9DETAIL          String? @map("TERM-9DETAIL") @db.NVarChar(255)
+  TERM_9AMOUNT1         Float?  @map("TERM-9AMOUNT1")
+  TERM_9DATE2           String? @map("TERM-9DATE2") @db.NVarChar(255)
+  TERM_9DETAIL1         String? @map("TERM-9DETAIL1") @db.NVarChar(255)
+  TERM_9Due_TOTAL       Float?  @map("TERM-9Due_TOTAL")
+  TOTAL_FEES___RECEIVED Float?  @map("TOTAL_FEES  _RECEIVED")
+  TOTAL_FEES_PENDING    Float?
+
+  @@map("_V2")
+  @@ignore
+}
+
+model V5 {
+  IDX                   Float?
+  YearA                 String?  @db.NVarChar(255)
+  SrNo                  Float?
+  NAME                  String?  @db.NVarChar(255)
+  MobileNo              String?  @db.NVarChar(255)
+  EMAIL                 String?  @db.NVarChar(255)
+  CurrentYear           String?  @db.NVarChar(255)
+  CuurentYearID         Int?
+  IsActive              Boolean?
+  EnrollmentNo          String?  @db.NVarChar(255)
+  TERM_FEE              String?  @db.NVarChar(255)
+  STRUCTURE             String?  @db.NVarChar(255)
+  TOTAL_FEE             String?  @db.NVarChar(255)
+  DEPOSIT_REFUNDAVLE    String?  @db.NVarChar(255)
+  DEPOSIT_RECEIVED      String?  @db.NVarChar(255)
+  TERM_1AMOUNT          String?  @map("TERM-1AMOUNT") @db.NVarChar(255)
+  TERM_1DATE            String?  @map("TERM-1DATE") @db.NVarChar(255)
+  TERM_1DETAIL          String?  @map("TERM-1DETAIL") @db.NVarChar(255)
+  TERM_1AMOUNT1         String?  @map("TERM-1AMOUNT1") @db.NVarChar(255)
+  TERM_1DATE2           String?  @map("TERM-1DATE2") @db.NVarChar(255)
+  TERM_1DETAIL1         String?  @map("TERM-1DETAIL1") @db.NVarChar(255)
+  TERM_1Due_TOTAL       String?  @map("TERM-1Due_TOTAL") @db.NVarChar(255)
+  TERM_2AMOUNT          String?  @map("TERM-2AMOUNT") @db.NVarChar(255)
+  TERM_2DATE            String?  @map("TERM-2DATE") @db.NVarChar(255)
+  TERM_2DETAIL          String?  @map("TERM-2DETAIL") @db.NVarChar(255)
+  TERM_2AMOUNT1         String?  @map("TERM-2AMOUNT1") @db.NVarChar(255)
+  TERM_2DATE2           String?  @map("TERM-2DATE2") @db.NVarChar(255)
+  TERM_2DETAIL1         String?  @map("TERM-2DETAIL1") @db.NVarChar(255)
+  TERM_2Due_TOTAL       Float?   @map("TERM-2Due_TOTAL")
+  TERM_3AMOUNT          String?  @map("TERM-3AMOUNT") @db.NVarChar(255)
+  TERM_3DATE            String?  @map("TERM-3DATE") @db.NVarChar(255)
+  TERM_3DETAIL          String?  @map("TERM-3DETAIL") @db.NVarChar(255)
+  TERM_3AMOUNT1         String?  @map("TERM-3AMOUNT1") @db.NVarChar(255)
+  TERM_3DATE2           String?  @map("TERM-3DATE2") @db.NVarChar(255)
+  TERM_3DETAIL1         String?  @map("TERM-3DETAIL1") @db.NVarChar(255)
+  TERM_3Due_TOTAL       String?  @map("TERM-3Due_TOTAL") @db.NVarChar(255)
+  TERM_4AMOUNT          String?  @map("TERM-4AMOUNT") @db.NVarChar(255)
+  TERM_4DATE            String?  @map("TERM-4DATE") @db.NVarChar(255)
+  TERM_4DETAIL          String?  @map("TERM-4DETAIL") @db.NVarChar(255)
+  TERM_4AMOUNT1         String?  @map("TERM-4AMOUNT1") @db.NVarChar(255)
+  TERM_4DATE2           String?  @map("TERM-4DATE2") @db.NVarChar(255)
+  TERM_4DETAIL1         String?  @map("TERM-4DETAIL1") @db.NVarChar(255)
+  TERM_4Due_TOTAL       String?  @map("TERM-4Due_TOTAL") @db.NVarChar(255)
+  TERM_5AMOUNT          String?  @map("TERM-5AMOUNT") @db.NVarChar(255)
+  TERM_5DATE            String?  @map("TERM-5DATE") @db.NVarChar(255)
+  TERM_5DETAIL          String?  @map("TERM-5DETAIL") @db.NVarChar(255)
+  TERM_5AMOUNT1         String?  @map("TERM-5AMOUNT1") @db.NVarChar(255)
+  TERM_5DATE2           String?  @map("TERM-5DATE2") @db.NVarChar(255)
+  TERM_5DETAIL1         String?  @map("TERM-5DETAIL1") @db.NVarChar(255)
+  TERM_5Due_TOTAL       String?  @map("TERM-5Due_TOTAL") @db.NVarChar(255)
+  TERM_6AMOUNT          String?  @map("TERM-6AMOUNT") @db.NVarChar(255)
+  TERM_6DATE            String?  @map("TERM-6DATE") @db.NVarChar(255)
+  TERM_6DETAIL          String?  @map("TERM-6DETAIL") @db.NVarChar(255)
+  TERM_6AMOUNT1         String?  @map("TERM-6AMOUNT1") @db.NVarChar(255)
+  TERM_6DATE2           String?  @map("TERM-6DATE2") @db.NVarChar(255)
+  TERM_6DETAIL1         String?  @map("TERM-6DETAIL1") @db.NVarChar(255)
+  TERM_6Due_TOTAL       Float?   @map("TERM-6Due_TOTAL")
+  TERM_7AMOUNT          String?  @map("TERM-7AMOUNT") @db.NVarChar(255)
+  TERM_7DATE            String?  @map("TERM-7DATE") @db.NVarChar(255)
+  TERM_7DETAIL          String?  @map("TERM-7DETAIL") @db.NVarChar(255)
+  TERM_7AMOUNT1         String?  @map("TERM-7AMOUNT1") @db.NVarChar(255)
+  TERM_7DATE2           String?  @map("TERM-7DATE2") @db.NVarChar(255)
+  TERM_7DETAIL1         String?  @map("TERM-7DETAIL1") @db.NVarChar(255)
+  TERM_7Due_TOTAL       String?  @map("TERM-7Due_TOTAL") @db.NVarChar(255)
+  TERM_8AMOUNT1         String?  @map("TERM-8AMOUNT1") @db.NVarChar(255)
+  TERM_8DATE            String?  @map("TERM-8DATE") @db.NVarChar(255)
+  TERM_8DETAIL          String?  @map("TERM-8DETAIL") @db.NVarChar(255)
+  TERM_8AMOUNT          String?  @map("TERM-8AMOUNT") @db.NVarChar(255)
+  TERM_8DATE2           String?  @map("TERM-8DATE2") @db.NVarChar(255)
+  TERM_8DETAIL1         String?  @map("TERM-8DETAIL1") @db.NVarChar(255)
+  TERM_8Due_TOTAL       String?  @map("TERM-8Due_TOTAL") @db.NVarChar(255)
+  TERM_9AMOUNT          String?  @map("TERM-9AMOUNT") @db.NVarChar(255)
+  TERM_9DATE            String?  @map("TERM-9DATE") @db.NVarChar(255)
+  TERM_9DETAIL          String?  @map("TERM-9DETAIL") @db.NVarChar(255)
+  TERM_9AMOUNT1         String?  @map("TERM-9AMOUNT1") @db.NVarChar(255)
+  TERM_9DATE2           String?  @map("TERM-9DATE2") @db.NVarChar(255)
+  TERM_9DETAIL1         String?  @map("TERM-9DETAIL1") @db.NVarChar(255)
+  TERM_9Due_TOTAL       String?  @map("TERM-9Due_TOTAL") @db.NVarChar(255)
+  TOTAL_FEES___RECEIVED String?  @map("TOTAL_FEES  _RECEIVED") @db.NVarChar(255)
+  TOTAL_FEES_PENDING    String?  @db.NVarChar(255)
+
+  @@map("_V5")
+  @@ignore
+}
+
+model V8 {
+  IDX                   Int
+  YearA                 String?  @db.NVarChar(50)
+  SrNo                  Int?
+  SName                 String?  @db.NVarChar(50)
+  MobileNo              String?  @db.NVarChar(20)
+  Email                 String?  @db.NVarChar(50)
+  CurrentYear           String?  @db.NVarChar(50)
+  CuurentYearID         Int?
+  IsActive              Boolean?
+  EnrollmentNo          String?  @db.NVarChar(50)
+  TERM_FEE              String?  @db.NVarChar(50)
+  STRUCTURE             String?  @db.NVarChar(50)
+  TOTAL_FEE             String?  @db.NVarChar(50)
+  DEPOSIT_REFUNDAVLE    String?  @db.NVarChar(50)
+  DEPOSIT_RECEIVED      String?  @db.NVarChar(50)
+  TERM_1AMOUNT          String?  @map("TERM-1AMOUNT") @db.NVarChar(50)
+  TERM_1DATE            String?  @map("TERM-1DATE") @db.NVarChar(50)
+  TERM_1DETAIL          String?  @map("TERM-1DETAIL") @db.NVarChar(50)
+  TERM_1AMOUNT1         String?  @map("TERM-1AMOUNT1") @db.NVarChar(50)
+  TERM_1DATE2           String?  @map("TERM-1DATE2") @db.NVarChar(50)
+  TERM_1DETAIL1         String?  @map("TERM-1DETAIL1") @db.NVarChar(50)
+  TERM_1Due_TOTAL       String?  @map("TERM-1Due_TOTAL") @db.NVarChar(50)
+  TERM_2AMOUNT          String?  @map("TERM-2AMOUNT") @db.NVarChar(50)
+  TERM_2DATE            String?  @map("TERM-2DATE") @db.NVarChar(50)
+  TERM_2DETAIL          String?  @map("TERM-2DETAIL") @db.NVarChar(50)
+  TERM_2AMOUNT1         String?  @map("TERM-2AMOUNT1") @db.NVarChar(50)
+  TERM_2DATE2           String?  @map("TERM-2DATE2") @db.NVarChar(50)
+  TERM_2DETAIL1         String?  @map("TERM-2DETAIL1") @db.NVarChar(50)
+  TERM_2Due_TOTAL       String?  @map("TERM-2Due_TOTAL") @db.NVarChar(50)
+  TERM_3AMOUNT          String?  @map("TERM-3AMOUNT") @db.NVarChar(50)
+  TERM_3DATE            String?  @map("TERM-3DATE") @db.NVarChar(50)
+  TERM_3DETAIL          String?  @map("TERM-3DETAIL") @db.NVarChar(50)
+  TERM_3AMOUNT1         String?  @map("TERM-3AMOUNT1") @db.NVarChar(50)
+  TERM_3DATE2           String?  @map("TERM-3DATE2") @db.NVarChar(50)
+  TERM_3DETAIL1         String?  @map("TERM-3DETAIL1") @db.NVarChar(50)
+  TERM_3Due_TOTAL       String?  @map("TERM-3Due_TOTAL") @db.NVarChar(50)
+  TERM_4AMOUNT          String?  @map("TERM-4AMOUNT") @db.NVarChar(50)
+  TERM_4DATE            String?  @map("TERM-4DATE") @db.NVarChar(50)
+  TERM_4DETAIL          String?  @map("TERM-4DETAIL") @db.NVarChar(50)
+  TERM_4AMOUNT1         String?  @map("TERM-4AMOUNT1") @db.NVarChar(50)
+  TERM_4DATE2           String?  @map("TERM-4DATE2") @db.NVarChar(50)
+  TERM_4DETAIL1         String?  @map("TERM-4DETAIL1") @db.NVarChar(50)
+  TERM_4Due_TOTAL       String?  @map("TERM-4Due_TOTAL") @db.NVarChar(50)
+  TERM_5AMOUNT          String?  @map("TERM-5AMOUNT") @db.NVarChar(50)
+  TERM_5DATE            String?  @map("TERM-5DATE") @db.NVarChar(50)
+  TERM_5DETAIL          String?  @map("TERM-5DETAIL") @db.NVarChar(50)
+  TERM_5AMOUNT1         String?  @map("TERM-5AMOUNT1") @db.NVarChar(50)
+  TERM_5DATE2           String?  @map("TERM-5DATE2") @db.NVarChar(50)
+  TERM_5DETAIL1         String?  @map("TERM-5DETAIL1") @db.NVarChar(50)
+  TERM_5Due_TOTAL       String?  @map("TERM-5Due_TOTAL") @db.NVarChar(50)
+  TERM_6AMOUNT          String?  @map("TERM-6AMOUNT") @db.NVarChar(50)
+  TERM_6DATE            String?  @map("TERM-6DATE") @db.NVarChar(50)
+  TERM_6DETAIL          String?  @map("TERM-6DETAIL") @db.NVarChar(50)
+  TERM_6AMOUNT1         String?  @map("TERM-6AMOUNT1") @db.NVarChar(50)
+  TERM_6DATE2           String?  @map("TERM-6DATE2") @db.NVarChar(50)
+  TERM_6DETAIL1         String?  @map("TERM-6DETAIL1") @db.NVarChar(50)
+  TERM_6Due_TOTAL       String?  @map("TERM-6Due_TOTAL") @db.NVarChar(50)
+  TERM_7AMOUNT          String?  @map("TERM-7AMOUNT") @db.NVarChar(50)
+  TERM_7DATE            String?  @map("TERM-7DATE") @db.NVarChar(50)
+  TERM_7DETAIL          String?  @map("TERM-7DETAIL") @db.NVarChar(50)
+  TERM_7AMOUNT1         String?  @map("TERM-7AMOUNT1") @db.NVarChar(50)
+  TERM_7DATE2           String?  @map("TERM-7DATE2") @db.NVarChar(50)
+  TERM_7DETAIL1         String?  @map("TERM-7DETAIL1") @db.NVarChar(50)
+  TERM_7Due_TOTAL       String?  @map("TERM-7Due_TOTAL") @db.NVarChar(50)
+  TERM_8AMOUNT1         String?  @map("TERM-8AMOUNT1") @db.NVarChar(50)
+  TERM_8DATE            String?  @map("TERM-8DATE") @db.NVarChar(50)
+  TERM_8DETAIL          String?  @map("TERM-8DETAIL") @db.NVarChar(50)
+  TERM_8AMOUNT          String?  @map("TERM-8AMOUNT") @db.NVarChar(50)
+  TERM_8DATE2           String?  @map("TERM-8DATE2") @db.NVarChar(50)
+  TERM_8DETAIL1         String?  @map("TERM-8DETAIL1") @db.NVarChar(50)
+  TERM_8Due_TOTAL       String?  @map("TERM-8Due_TOTAL") @db.NVarChar(50)
+  TERM_9AMOUNT          String?  @map("TERM-9AMOUNT") @db.NVarChar(50)
+  TERM_9DATE            String?  @map("TERM-9DATE") @db.NVarChar(50)
+  TERM_9DETAIL          String?  @map("TERM-9DETAIL") @db.NVarChar(50)
+  TERM_9AMOUNT1         String?  @map("TERM-9AMOUNT1") @db.NVarChar(50)
+  TERM_9DATE2           String?  @map("TERM-9DATE2") @db.NVarChar(50)
+  TERM_9DETAIL1         String?  @map("TERM-9DETAIL1") @db.NVarChar(50)
+  TERM_9Due_TOTAL       String?  @map("TERM-9Due_TOTAL") @db.NVarChar(50)
+  TOTAL_FEES___RECEIVED String?  @map("TOTAL_FEES  _RECEIVED") @db.NVarChar(50)
+  TOTAL_FEES_PENDING    String?  @db.NVarChar(50)
+
+  @@map("_V8")
+  @@ignore
+}
+
+model mstExpenseHead {
+  ExpenseHeadIDP  BigInt   @id(map: "PK_mstExpenseHead") @default(autoincrement())
+  ExpenseHeadName String   @db.NVarChar(50)
+  IsActive        Boolean
+  IsDeleted       Boolean?
+  EntryBy         BigInt
+  EntryDate       DateTime @db.DateTime
+}
+
+model mstFees {
+  FeesIDP             BigInt    @id(map: "PK_mstFees") @default(autoincrement())
+  DepositFee          Int?
+  TurmFee1            Int?
+  TurmFee2            Int?
+  TurmFee3            Int?
+  TurmFee4            Int?
+  TurmFee5            Int?
+  TurmFee6            Int?
+  TurmFee7            Int?
+  TurmFee8            Int?
+  TurmFee9            Int?
+  TurmFee1_Collection DateTime? @db.Date
+  TurmFee2_Collection DateTime? @db.Date
+  TurmFee3_Collection DateTime? @db.Date
+  TurmFee4_Collection DateTime? @db.Date
+  TurmFee5_Collection DateTime? @db.Date
+  TurmFee6_Collection DateTime? @db.Date
+  TurmFee7_Collection DateTime? @db.Date
+  TurmFee8_Collection DateTime? @db.Date
+  TurmFee9_Collection DateTime? @db.Date
+  FeesTypeID          Int?      @db.TinyInt
+  BatchID             Int?
+  IsActive            Boolean
+  IsDelete            Boolean?
+  EntryBy             BigInt?
+  EntryDate           DateTime? @db.DateTime
+}
+
+model sysAdmin {
+  AdminIDP          Int       @id(map: "PK_Sysadmin") @default(autoincrement())
+  UserName          String?   @db.NVarChar(50)
+  Password          String?   @db.NVarChar(30)
+  FirstName         String?   @db.NVarChar(50)
+  LastName          String?   @db.NVarChar(50)
+  TermFee           Float?
+  SMTPEmailAddress  String?   @db.NVarChar(100)
+  SMTPUserName      String?   @db.NVarChar(100)
+  SMTPPassword      String?   @db.NVarChar(100)
+  SMTPHost          String?   @db.NVarChar(100)
+  SMTPPort          Int?
+  SMTPSSL           Boolean?
+  OTP               Int?
+  SMSKey            String?   @db.NVarChar(100)
+  GoogleMapKey      String?   @db.NVarChar(100)
+  GoogleLocationKey String?   @db.NVarChar(100)
+  PaymentGatewayKey String?   @db.NVarChar(100)
+  RevenueCommission String?   @db.NVarChar(100)
+  CDNPath           String?   @db.NVarChar(100)
+  UpdatedDate       DateTime? @db.DateTime
+}
+
+model tblBudget {
+  BudgetIDP       BigInt   @id(map: "PK_tblBudget") @default(autoincrement())
+  FinancialYearID Int
+  ExpenseHeadIDF  BigInt
+  BudgetAmount    Decimal  @db.Decimal(12, 2)
+  Remarks         String?  @db.NVarChar(250)
+  IsDeleted       Boolean?
+  EntryBy         BigInt
+  EntryDate       DateTime @db.DateTime
+}
+
+model tblDocument {
+  DocumentIDP    BigInt    @id(map: "PK_tblDocument") @default(autoincrement())
+  StudentIDF     BigInt
+  DocumentTypeID Int?      @db.TinyInt
+  Attachment     String?   @db.NVarChar(2000)
+  IsDelete       Boolean?
+  EntryBy        BigInt?
+  EntryDate      DateTime? @db.DateTime
+}
+
+model tblExpense {
+  ExpenseIDP     BigInt   @id(map: "PK_tblExpense") @default(autoincrement())
+  ExpenseHeadIDF BigInt
+  ExpenseDate    DateTime @db.DateTime
+  Amount         Decimal  @db.Decimal(12, 2)
+  Remarks        String?  @db.NVarChar(250)
+  IsDeleted      Boolean?
+  EntryBy        BigInt
+  EntryDate      DateTime @db.DateTime
+}
+
+model tblFees {
+  FeesIDP       BigInt    @id(map: "PK_tblFees") @default(autoincrement())
+  StudentIDF    BigInt
+  TermID        Int
+  TermEntryID   Int?
+  ReceiptDate   DateTime? @db.DateTime
+  ReceiptAmount Decimal?  @db.Decimal(10, 2)
+  Remarks       String?   @db.NVarChar(250)
+}
+
+model tblStaff {
+  StaffIDP               BigInt    @id(map: "PK_tblStaff") @default(autoincrement())
+  FullName               String?   @db.NVarChar(100)
+  MobileNo               String?   @db.NVarChar(20)
+  Email                  String?   @db.NVarChar(50)
+  GenderID               Int?      @db.TinyInt
+  DesignationID          Int?      @db.TinyInt
+  DepartmentID           Int?      @db.TinyInt
+  StaffTypeID            Int?      @db.TinyInt
+  DateOfBirth            DateTime? @db.DateTime
+  Age                    Int?      @db.TinyInt
+  DateOfJoining          DateTime? @db.DateTime
+  DateOfAddmission       DateTime? @db.DateTime
+  CastandReligion        String?   @db.NVarChar(50)
+  Qualification          String?   @db.NVarChar(50)
+  UGPassingDate          DateTime? @db.DateTime
+  UGCollageName          String?   @db.NVarChar(200)
+  UGUniversityName       String?   @db.NVarChar(200)
+  PGPassingDate          DateTime? @db.DateTime
+  PGCollageName          String?   @db.NVarChar(200)
+  PGUniversityName       String?   @db.NVarChar(200)
+  StateRegNumber         String?   @db.NVarChar(50)
+  NCHRegNumber           String?   @db.NVarChar(50)
+  ExperienceDetail       String?   @db.NVarChar(500)
+  PromotionDate          DateTime? @db.DateTime
+  PromotionDesignationID Int?      @db.TinyInt
+  AdharNumber            BigInt?
+  PANNumber              String?   @db.NVarChar(10)
+  PermanentAddress1      String?   @db.NVarChar(200)
+  PermanentAddress2      String?   @db.NVarChar(200)
+  PermanentCity          String?   @db.NVarChar(50)
+  PermanentDistrict      String?   @db.NVarChar(50)
+  PermanentState         String?   @db.NVarChar(50)
+  CurrentAddress1        String?   @db.NVarChar(200)
+  CurrentAddress2        String?   @db.NVarChar(200)
+  CurrentCity            String?   @db.NVarChar(50)
+  CurrentDistrict        String?   @db.NVarChar(50)
+  CurrentState           String?   @db.NVarChar(50)
+  RefferancePerson       String?   @db.NVarChar(200)
+  PassportPhoto          String?   @db.NVarChar(200)
+  SignPhoto              String?   @db.NVarChar(200)
+  Scale                  Float?
+  Password               String?   @db.NVarChar(10)
+  OTP                    String?   @db.NVarChar(10)
+  Remark1                String?   @db.NVarChar(500)
+  Remark2                String?   @db.NVarChar(500)
+  IsActive               Boolean
+  IsDelete               Boolean?
+  EntryBy                BigInt
+  EntryDate              DateTime? @db.DateTime
+}
+
+model tblStaffExperience {
+  StaffExperienceIDP BigInt    @id(map: "PK_tblStaffExperience") @default(autoincrement())
+  StaffIDF           BigInt
+  InstituteName      String?   @db.NVarChar(200)
+  FromDate           DateTime? @db.DateTime
+  ToDate             DateTime? @db.DateTime
+  Designation        String?   @db.NVarChar(100)
+  TotalYear          Decimal?  @db.Decimal(5, 2)
+  IsDelete           Boolean?
+  EntryDate          DateTime? @db.DateTime
+}
+
+model tblStudent {
+  StudentIDP        BigInt   @id(map: "PK_tblStudent") @default(autoincrement())
+  FullName          String?  @db.NVarChar(100)
+  MobileNo          String?  @db.NVarChar(20)
+  Email             String?  @db.NVarChar(50)
+  GenderID          Int?     @db.TinyInt
+  Address           String?  @db.NVarChar(200)
+  FatherMobileNo    String?  @db.NVarChar(20)
+  CuurentYearID     Decimal? @db.Decimal(4, 2)
+  GRNNo             String?  @db.NVarChar(20)
+  AadharNumber      BigInt?
+  PANNo             String?  @db.NVarChar(10)
+  ScholarshipAmount Int?
+  EnrollmenyYear    String?  @db.NVarChar(20)
+  FeesTypeID        Int?     @db.TinyInt
+  BatchID           Int?
+  Remark1           String?  @db.NVarChar(500)
+  Remark2           String?  @db.NVarChar(500)
+  Remark3           String?  @db.NVarChar(500)
+  Password          String?  @db.NVarChar(10)
+  OTP               String?  @db.NVarChar(10)
+  TermFee           Float?
+  TotalFee          Float?
+  DepositRefundable Float?
+  DepositReceived   Float?
+  ImportRefID       BigInt?
+  ProfileImage      String?  @db.NVarChar(200)
+  PassYear1         Int?     @db.TinyInt
+  PassYear2         Int?     @db.TinyInt
+  PassYear3         Int?     @db.TinyInt
+  PassYear4         Int?     @db.TinyInt
+  IsActive          Boolean
+  IsDelete          Boolean?
+  EntryBy           BigInt
+  EntryDate         DateTime @db.DateTime
+
+  AppUser AppUser[]
+}

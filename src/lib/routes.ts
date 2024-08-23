@@ -5,22 +5,9 @@ import { z } from 'zod';
 
 export const Routes = {
     home: makeRoute(() => '/'),
-
     scalar: makeRoute(() => '/scalar'),
-
     terms: makeRoute(() => '/terms'),
     privacy: makeRoute(() => '/privacy'),
-
-    login: makeRoute(() => '/login'),
-
-    getStarted: makeRoute(() => '/get-started'),
-    verify: makeRoute(
-        () => '/get-started/verify',
-        z.object({}),
-        z.object({ email: z.string().email() })
-    ),
-
-    secret: makeRoute(() => '/secret'),
 };
 
 type RouteBuilder<Params extends z.ZodSchema, Search extends z.ZodSchema> = {

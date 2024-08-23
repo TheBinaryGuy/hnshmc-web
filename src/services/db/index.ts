@@ -1,23 +1,15 @@
-import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { PrismaClient } from '@prisma/client';
 
-import { serverEnvs } from '@/env/server';
-import * as schema from '@/services/db/schema';
+const prismaClientSingleton = () => {
+    return new PrismaClient();
+};
 
-declare global {
-    // eslint-disable-next-line no-var
-    var globalDb: PostgresJsDatabase<typeof schema> | undefined;
-}
+declare const globalThis: {
+    prismaGlobal: ReturnType<typeof prismaClientSingleton>;
+} & typeof global;
 
-let db: PostgresJsDatabase<typeof schema>;
+const prisma = globalThis.prismaGlobal ?? prismaClientSingleton();
 
-if (serverEnvs.NODE_ENV === 'production') {
-    db = drizzle(postgres(serverEnvs.DATABASE_URL, { prepare: true }), { schema });
-} else {
-    if (!global.globalDb)
-        global.globalDb = drizzle(postgres(serverEnvs.DATABASE_URL, { prepare: true }), { schema });
+export default prisma;
 
-    db = global.globalDb;
-}
-
-export { db };
+if (process.env.NODE_ENV !== 'production') globalThis.prismaGlobal = prisma;

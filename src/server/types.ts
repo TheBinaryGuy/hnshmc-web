@@ -1,9 +1,9 @@
 import type { Session, User } from 'lucia';
 
-import { db } from '@/services/db';
+import type prisma from '@/services/db';
 
 export type ContextVariables = {
-    db: typeof db;
+    db: typeof prisma;
     user: User | null;
     session: Session | null;
 };

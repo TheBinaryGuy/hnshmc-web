@@ -1,8 +1,6 @@
-import { Routes } from '@/lib/routes';
 import type { ContextVariables } from '@/server/types';
 import { lucia } from '@/services/auth';
 import { createRoute, OpenAPIHono } from '@hono/zod-openapi';
-import { getCookie, setCookie } from 'hono/cookie';
 
 export const logout = new OpenAPIHono<{ Variables: ContextVariables }>().openapi(
     createRoute({
@@ -17,14 +15,12 @@ export const logout = new OpenAPIHono<{ Variables: ContextVariables }>().openapi
         },
     }),
     async c => {
-        const sessionId = getCookie(c, lucia.sessionCookieName);
-
-        if (!sessionId) {
-            return c.redirect(Routes.login());
+        const session = c.get('session');
+        if (!session) {
+            return c.json({});
         }
 
-        await lucia.invalidateSession(sessionId);
-        setCookie(c, lucia.sessionCookieName, '', { expires: new Date(0), sameSite: 'Strict' });
-        return c.redirect(Routes.home());
+        await lucia.invalidateSession(session.id);
+        return c.json({});
     }
 );

@@ -1,11 +1,9 @@
-import { DrizzlePostgreSQLAdapter } from '@lucia-auth/adapter-drizzle';
+import { serverEnvs } from '@/env/server';
+import prisma from '@/services/db';
+import { PrismaAdapter } from '@lucia-auth/adapter-prisma';
 import { Lucia } from 'lucia';
 
-import { serverEnvs } from '@/env/server';
-import { db } from '@/services/db';
-import { sessions, users } from '@/services/db/schema';
-
-const adapter = new DrizzlePostgreSQLAdapter(db, sessions, users);
+const adapter = new PrismaAdapter(prisma.appSession, prisma.appUser);
 
 export const lucia = new Lucia(adapter, {
     sessionCookie: {
@@ -16,7 +14,6 @@ export const lucia = new Lucia(adapter, {
     getUserAttributes: attributes => {
         return {
             id: attributes.id,
-            email: attributes.email,
         };
     },
 });
@@ -26,7 +23,6 @@ declare module 'lucia' {
         Lucia: typeof lucia;
         DatabaseUserAttributes: {
             id: number;
-            email: string;
         };
     }
 }
