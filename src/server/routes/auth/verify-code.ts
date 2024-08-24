@@ -75,8 +75,7 @@ export const verifyCodeRoute = new OpenAPIHono<{
         });
 
         const session = await lucia.createSession(existingUser.id, {});
-        const sessionCookie = lucia.createSessionCookie(session.id);
-        c.header(sessionCookie.name, sessionCookie.value);
+        c.header('auth_session', session.id);
 
         return c.json({});
     }

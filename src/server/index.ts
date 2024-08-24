@@ -39,14 +39,12 @@ app.use(async (c, next) => {
     const { session, user } = await lucia.validateSession(sessionId);
 
     if (session && session.fresh) {
-        const sessionCookie = lucia.createSessionCookie(session.id);
-        c.header(lucia.sessionCookieName, sessionCookie.value);
+        c.header('auth_session', session.id);
     }
 
-    // if (!session) {
-    //     const sessionCookie = lucia.createBlankSessionCookie();
-    //     c.header(lucia.sessionCookieName, sessionCookie.value);
-    // }
+    if (!session) {
+        c.header('auth_session', '');
+    }
 
     c.set('user', user);
     c.set('session', session);
