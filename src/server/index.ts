@@ -43,10 +43,10 @@ app.use(async (c, next) => {
         c.header(lucia.sessionCookieName, sessionCookie.value);
     }
 
-    if (!session) {
-        const sessionCookie = lucia.createBlankSessionCookie();
-        c.header(lucia.sessionCookieName, sessionCookie.value);
-    }
+    // if (!session) {
+    //     const sessionCookie = lucia.createBlankSessionCookie();
+    //     c.header(lucia.sessionCookieName, sessionCookie.value);
+    // }
 
     c.set('user', user);
     c.set('session', session);
