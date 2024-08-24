@@ -13,6 +13,12 @@
         "next/dist/client/router.d.ts",
         "next/dist/server/api-utils/index.d.ts"
     ],
+    "workbench.editor.customLabels.patterns": {
+        "**/app/**/page.tsx": "${dirname}.${extname}",
+        "**/app/**/layout.tsx": "${dirname}/layout.${extname}",
+        "**/app/**/route.ts": "${dirname}.${extname}",
+        "**/app/**/route.tsx": "${dirname}.${extname}"
+    },
     "typescript.preferences.importModuleSpecifier": "non-relative",
     "javascript.preferences.importModuleSpecifier": "non-relative",
     "typescript.preferences.preferTypeOnlyAutoImports": true
