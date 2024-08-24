@@ -47,7 +47,14 @@ const fees = new OpenAPIHono<{ Variables: ContextVariables }>().openapi(
                 description: 'Success',
                 content: {
                     'application/json': {
-                        schema: z.array(tblFeesSchema),
+                        schema: tblStudentSchema
+                            .pick({
+                                TotalFee: true,
+                                TermFee: true,
+                            })
+                            .extend({
+                                Fees: z.array(tblFeesSchema),
+                            }),
                     },
                 },
             },
@@ -66,6 +73,7 @@ const fees = new OpenAPIHono<{ Variables: ContextVariables }>().openapi(
                 student: {
                     select: {
                         TotalFee: true,
+                        TermFee: true,
                     },
                 },
             },
@@ -77,7 +85,13 @@ const fees = new OpenAPIHono<{ Variables: ContextVariables }>().openapi(
             },
         });
 
-        return c.json(fees);
+        const studentFees = {
+            TotalFee: appUser.student.TotalFee,
+            TermFee: appUser.student.TermFee,
+            Fees: fees,
+        };
+
+        return c.json(studentFees);
     }
 );
 
