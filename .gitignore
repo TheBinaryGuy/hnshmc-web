@@ -38,3 +38,5 @@ public/static
 .vercel
 
 certificates
+
+prisma/gererated
