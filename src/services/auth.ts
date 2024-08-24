@@ -10,6 +10,7 @@ export const lucia = new Lucia(adapter, {
         attributes: {
             secure: serverEnvs.NODE_ENV === 'production',
         },
+        name: 'sessionid',
     },
     getUserAttributes: attributes => {
         return {
