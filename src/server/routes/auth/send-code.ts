@@ -1,5 +1,5 @@
-import { generateEmailVerificationCode, sendVerificationCode } from '@/lib/utils.server';
 import type { ContextVariables } from '@/server/types';
+import { lucia } from '@/services/auth';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { HTTPException } from 'hono/http-exception';
 import { generateId } from 'lucia';
@@ -78,14 +78,8 @@ export const sendCodeRoute = new OpenAPIHono<{
             id = user.id;
         }
 
-        const code = await generateEmailVerificationCode(id);
-        const success = await sendVerificationCode(email, code);
-
-        if (!success) {
-            throw new HTTPException(500, {
-                message: 'Failed to send email.',
-            });
-        }
+        const session = await lucia.createSession(id, {});
+        c.header('sessionid', session.id);
 
         return c.json({});
     }
