@@ -39,4 +39,4 @@ public/static
 
 certificates
 
-prisma/gererated
+/prisma/generated/
