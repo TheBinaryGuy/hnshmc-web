@@ -58,11 +58,10 @@ export const sendCodeRoute = new OpenAPIHono<{
                     Email: {
                         equals: normalizedEmail,
                     },
-                    IsDelete: false,
                 },
             });
 
-            if (!student) {
+            if (!student || student.IsDelete === true) {
                 throw new HTTPException(404, {
                     message: 'User not found.',
                 });

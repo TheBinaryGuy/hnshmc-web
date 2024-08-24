@@ -7,6 +7,16 @@ import prisma from '@/services/db';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { apiReference } from '@scalar/hono-api-reference';
 
+declare global {
+    interface BigInt {
+        toJSON(): number;
+    }
+}
+
+BigInt.prototype.toJSON = function () {
+    return Number(this);
+};
+
 const app = new OpenAPIHono<{ Variables: ContextVariables }>();
 
 app.use(async (c, next) => {
