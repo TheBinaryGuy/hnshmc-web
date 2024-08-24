@@ -39,11 +39,11 @@ app.use(async (c, next) => {
     const { session, user } = await lucia.validateSession(sessionId);
 
     if (session && session.fresh) {
-        c.header('auth_session', session.id);
+        c.header('sessionid', session.id);
     }
 
     if (!session) {
-        c.header('auth_session', '');
+        c.header('sessionid', '');
     }
 
     c.set('user', user);
