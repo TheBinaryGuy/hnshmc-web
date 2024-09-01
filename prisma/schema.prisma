@@ -6,7 +6,7 @@ generator client {
 generator zod {
   provider         = "zod-prisma-types"
   output           = "./generated/zod"
-  createInputTypes = false
+  createInputTypes = "false"
 }
 
 datasource db {
@@ -15,20 +15,19 @@ datasource db {
 }
 
 model AppUser {
-  id        String @id
-  studentId BigInt
-
-  student                   tblStudent                  @relation(references: [StudentIDP], fields: [studentId], onDelete: Cascade)
-  appSessions               AppSession[]
+  id                        String                      @id
+  studentId                 BigInt
   appEmailVerificationCodes AppEmailVerificationCodes[]
+  appFiles                  AppFile[]
+  appSessions               AppSession[]
+  student                   tblStudent                  @relation(fields: [studentId], references: [StudentIDP], onDelete: Cascade)
 }
 
 model AppSession {
   id        String   @id
   userId    String
   expiresAt DateTime
-
-  appUser AppUser @relation(references: [id], fields: [userId], onDelete: Cascade)
+  appUser   AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model AppEmailVerificationCodes {
@@ -36,8 +35,15 @@ model AppEmailVerificationCodes {
   code      String   @db.VarChar(8)
   expiresAt DateTime
   userId    String
+  appUser   AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
 
-  appUser AppUser @relation(references: [id], fields: [userId], onDelete: Cascade)
+model AppFile {
+  id      Int     @id @default(autoincrement())
+  key     String
+  status  String  @default("PENDING")
+  userId  String
+  appUser AppUser @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model PassFail {
@@ -664,40 +670,39 @@ model tblStaffExperience {
 }
 
 model tblStudent {
-  StudentIDP        BigInt   @id(map: "PK_tblStudent") @default(autoincrement())
-  FullName          String?  @db.NVarChar(100)
-  MobileNo          String?  @db.NVarChar(20)
-  Email             String?  @db.NVarChar(50)
-  GenderID          Int?     @db.TinyInt
-  Address           String?  @db.NVarChar(200)
-  FatherMobileNo    String?  @db.NVarChar(20)
-  CuurentYearID     Decimal? @db.Decimal(4, 2)
-  GRNNo             String?  @db.NVarChar(20)
+  StudentIDP        BigInt    @id(map: "PK_tblStudent") @default(autoincrement())
+  FullName          String?   @db.NVarChar(100)
+  MobileNo          String?   @db.NVarChar(20)
+  Email             String?   @db.NVarChar(50)
+  GenderID          Int?      @db.TinyInt
+  Address           String?   @db.NVarChar(200)
+  FatherMobileNo    String?   @db.NVarChar(20)
+  CuurentYearID     Decimal?  @db.Decimal(4, 2)
+  GRNNo             String?   @db.NVarChar(20)
   AadharNumber      BigInt?
-  PANNo             String?  @db.NVarChar(10)
+  PANNo             String?   @db.NVarChar(10)
   ScholarshipAmount Int?
-  EnrollmenyYear    String?  @db.NVarChar(20)
-  FeesTypeID        Int?     @db.TinyInt
+  EnrollmenyYear    String?   @db.NVarChar(20)
+  FeesTypeID        Int?      @db.TinyInt
   BatchID           Int?
-  Remark1           String?  @db.NVarChar(500)
-  Remark2           String?  @db.NVarChar(500)
-  Remark3           String?  @db.NVarChar(500)
-  Password          String?  @db.NVarChar(10)
-  OTP               String?  @db.NVarChar(10)
+  Remark1           String?   @db.NVarChar(500)
+  Remark2           String?   @db.NVarChar(500)
+  Remark3           String?   @db.NVarChar(500)
+  Password          String?   @db.NVarChar(10)
+  OTP               String?   @db.NVarChar(10)
   TermFee           Float?
   TotalFee          Float?
   DepositRefundable Float?
   DepositReceived   Float?
   ImportRefID       BigInt?
-  ProfileImage      String?  @db.NVarChar(200)
-  PassYear1         Int?     @db.TinyInt
-  PassYear2         Int?     @db.TinyInt
-  PassYear3         Int?     @db.TinyInt
-  PassYear4         Int?     @db.TinyInt
+  ProfileImage      String?   @db.NVarChar(200)
+  PassYear1         Int?      @db.TinyInt
+  PassYear2         Int?      @db.TinyInt
+  PassYear3         Int?      @db.TinyInt
+  PassYear4         Int?      @db.TinyInt
   IsActive          Boolean
   IsDelete          Boolean?
   EntryBy           BigInt
-  EntryDate         DateTime @db.DateTime
-
-  AppUser AppUser[]
+  EntryDate         DateTime  @db.DateTime
+  AppUser           AppUser[]
 }

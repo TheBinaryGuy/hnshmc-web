@@ -20,6 +20,12 @@ export const serverEnvs = createEnv({
 
         // always required regardless of email provider
         EMAIL_FROM: z.string(),
+
+        ACCOUNT_ID: z.string(),
+        BUCKET_NAME: z.string(),
+        ACCESS_KEY_ID: z.string(),
+        SECRET_ACCESS_KEY: z.string(),
+        BUCKET_DOMAIN: z.string(),
     },
     experimental__runtimeEnv: process.env,
     emptyStringAsUndefined: true,
