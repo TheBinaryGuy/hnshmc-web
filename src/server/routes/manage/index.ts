@@ -1,6 +1,6 @@
 import { serverEnvs } from '@/env/server';
 import type { ContextVariables } from '@/server/types';
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
+import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { tblFeesSchema, tblStudentSchema } from 'prisma/generated/zod';
@@ -14,12 +14,12 @@ const S3 = new S3Client({
     },
 });
 
-function getProfileKey(id: string) {
-    return `${id}/profile`;
+function generateKey(id: string) {
+    return `${id}/profile-${crypto.randomUUID()}`;
 }
 
-function getProfileUrl(id: string) {
-    return `https://${serverEnvs.BUCKET_DOMAIN}/${getProfileKey(id)}`;
+function getProfileUrl(key: string) {
+    return `https://${serverEnvs.BUCKET_DOMAIN}/${key}`;
 }
 
 const profile = new OpenAPIHono<{ Variables: ContextVariables }>()
@@ -96,7 +96,7 @@ const profile = new OpenAPIHono<{ Variables: ContextVariables }>()
             const db = c.get('db');
             const { contentType } = c.req.valid('json');
 
-            const key = getProfileKey(user.id);
+            const key = generateKey(user.id);
 
             let url: string | undefined;
             try {
@@ -146,7 +146,7 @@ const profile = new OpenAPIHono<{ Variables: ContextVariables }>()
                     content: {
                         'application/json': {
                             schema: z.object({
-                                status: z.enum(['FAILED', 'COMPLETED']),
+                                key: z.string(),
                             }),
                         },
                     },
@@ -163,37 +163,96 @@ const profile = new OpenAPIHono<{ Variables: ContextVariables }>()
             },
         }),
         async c => {
-            const { status } = c.req.valid('json');
+            const { key } = c.req.valid('json');
             const db = c.get('db');
             const user = c.get('user')!;
 
             try {
                 await db.$transaction(async tx => {
-                    await tx.appFile.updateMany({
+                    await tx.appUser.update({
                         data: {
-                            status,
-                        },
-                        where: {
-                            key: getProfileKey(user.id),
-                            userId: user.id,
-                            status: 'PENDING',
-                        },
-                    });
-
-                    if (status === 'COMPLETED') {
-                        await tx.appUser.update({
-                            data: {
-                                student: {
-                                    update: {
-                                        ProfileImage: getProfileUrl(user.id),
-                                    },
+                            student: {
+                                update: {
+                                    ProfileImage: getProfileUrl(key),
                                 },
                             },
-                            where: {
-                                id: user.id,
+                        },
+                        where: {
+                            id: user.id,
+                        },
+                    });
+                });
+            } catch {
+                c.status(500);
+                return c.body(null);
+            }
+
+            return c.body(null);
+        }
+    )
+    .openapi(
+        createRoute({
+            method: 'delete',
+            path: '/api/manage/profile/clear-image',
+            tags: ['Manage'],
+            summary: 'Clear profile image',
+            responses: {
+                200: {
+                    description: 'Success',
+                },
+                500: {
+                    description: 'Server error',
+                },
+            },
+        }),
+        async c => {
+            const db = c.get('db');
+            const user = c.get('user')!;
+
+            const userData = await db.appUser.findFirst({
+                select: {
+                    student: {
+                        select: {
+                            ProfileImage: true,
+                        },
+                    },
+                },
+                where: {
+                    id: user.id,
+                },
+            });
+
+            if (!userData || !userData.student.ProfileImage) {
+                c.status(500);
+                return c.body(null);
+            }
+
+            const key = userData.student.ProfileImage!.replace(
+                `https://${serverEnvs.BUCKET_DOMAIN}/`,
+                ''
+            );
+
+            try {
+                await db.$transaction(async tx => {
+                    await S3.send(
+                        new DeleteObjectCommand({
+                            Bucket: serverEnvs.BUCKET_NAME,
+                            Key: key,
+                        })
+                    );
+
+                    await tx.appUser.update({
+                        data: {
+                            student: {
+                                update: {
+                                    ProfileImage: null,
+                                },
                             },
-                        });
-                    }
+                        },
+                        where: {
+                            id: user.id,
+                        },
+                    });
                 });
             } catch {
                 c.status(500);
