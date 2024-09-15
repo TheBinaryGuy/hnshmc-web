@@ -1,10 +1,10 @@
 import 'server-only';
 
-import { Template as ConfirmationCode } from '@/emails/confirmation-code';
+import ConfirmationCode from '@/emails/confirmation-code';
 import { serverEnvs } from '@/env/server';
 import { lucia } from '@/services/auth';
 import prisma from '@/services/db';
-import { render } from 'jsx-email';
+import { render } from '@react-email/render';
 import { cookies } from 'next/headers';
 import { createTransport } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
@@ -50,7 +50,7 @@ export async function sendVerificationCode(emailAddress: string, code: string) {
     }
 
     try {
-        const html = await render(ConfirmationCode({ validationCode: code }));
+        const html = await render(<ConfirmationCode validationCode={code} />);
 
         if (serverEnvs.EMAIL_PROVIDER === 'resend') {
             const resend = new Resend(serverEnvs.RESEND_API_KEY);
