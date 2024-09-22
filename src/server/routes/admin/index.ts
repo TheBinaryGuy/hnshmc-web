@@ -74,7 +74,7 @@ const users = new OpenAPIHono<{ Variables: ContextVariables }>().openapi(
                   }
                 : undefined,
             skip: paginationCursor ? 1 : undefined,
-            take: paginationCursor ? 20 : undefined,
+            take: !search ? 200 : undefined,
         });
 
         const nextCursor = students.at(-1)?.StudentIDP;
