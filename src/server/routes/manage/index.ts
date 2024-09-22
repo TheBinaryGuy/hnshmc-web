@@ -1,4 +1,5 @@
 import { serverEnvs } from '@/env/server';
+import { requiresAuth } from '@/server/middleware';
 import type { ContextVariables } from '@/server/types';
 import { DeleteObjectCommand, PutObjectCommand, S3Client } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
@@ -323,5 +324,6 @@ const fees = new OpenAPIHono<{ Variables: ContextVariables }>().openapi(
 );
 
 export const manageApp = new OpenAPIHono<{ Variables: ContextVariables }>()
+    .use('/api/manage/*', requiresAuth)
     .route('/', profile)
     .route('/', fees);

@@ -1,5 +1,5 @@
 import type { ContextVariables } from '@/server/types';
-import { lucia } from '@/services/auth';
+import { lucia, luciaAdmin } from '@/services/auth';
 import { createRoute, OpenAPIHono, z } from '@hono/zod-openapi';
 import { HTTPException } from 'hono/http-exception';
 import { generateId } from 'lucia';
@@ -34,19 +34,34 @@ export const sendCodeRoute = new OpenAPIHono<{
         responses: {
             200: {
                 description: 'Success',
+                headers: z.object({
+                    sessionid: z.string().optional(),
+                    'admin-sessionid': z.string().optional(),
+                }),
             },
         },
     }),
     async c => {
         const { email } = c.req.valid('json');
         const db = c.get('db');
-
         const normalizedEmail = email.toUpperCase();
+
+        const adminUser = await db.appAdminUser.findFirst({
+            where: {
+                email,
+            },
+        });
+
+        if (adminUser !== null) {
+            const session = await luciaAdmin.createSession(adminUser.id, {});
+            c.header('admin-sessionid', session.id);
+            return c.json({});
+        }
 
         const user = await db.appUser.findFirst({
             where: {
                 student: {
-                    Email: normalizedEmail,
+                    Email: email,
                 },
             },
         });
@@ -80,7 +95,6 @@ export const sendCodeRoute = new OpenAPIHono<{
 
         const session = await lucia.createSession(id, {});
         c.header('sessionid', session.id);
-
         return c.json({});
     }
 );

@@ -2,24 +2,14 @@ import 'server-only';
 
 import ConfirmationCode from '@/emails/confirmation-code';
 import { serverEnvs } from '@/env/server';
-import { lucia } from '@/services/auth';
 import prisma from '@/services/db';
 import { render } from '@react-email/render';
-import { cookies } from 'next/headers';
+import type { RegisteredDatabaseUserAttributes } from 'lucia';
 import { createTransport } from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { createDate, isWithinExpirationDate, TimeSpan } from 'oslo';
 import { alphabet, generateRandomString } from 'oslo/crypto';
-import { cache } from 'react';
 import { Resend } from 'resend';
-
-export const getUser = cache(async () => {
-    const sessionId = cookies().get(lucia.sessionCookieName)?.value;
-    if (!sessionId) return null;
-
-    const { user } = await lucia.validateSession(sessionId);
-    return user;
-});
 
 function getSmtpTransporter() {
     const requiresAuth =
@@ -113,4 +103,25 @@ export async function generateEmailVerificationCode(userId: string): Promise<str
     });
 
     return code;
+}
+
+export function transformIntoDatabaseSession(session: {
+    id: string;
+    userId: string;
+    expiresAt: Date;
+}) {
+    const { id, userId, expiresAt, ...attributes } = session;
+    return {
+        userId,
+        id,
+        expiresAt,
+        attributes,
+    };
+}
+
+export function transformIntoDatabaseUser(user: RegisteredDatabaseUserAttributes) {
+    return {
+        id: user.id,
+        attributes: user,
+    };
 }

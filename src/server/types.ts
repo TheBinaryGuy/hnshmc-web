@@ -6,4 +6,6 @@ export type ContextVariables = {
     db: typeof prisma;
     user: User | null;
     session: Session | null;
+    adminUser: User | null;
+    adminSession: Session | null;
 };

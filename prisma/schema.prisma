@@ -30,12 +30,30 @@ model AppSession {
   appUser   AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
+model AppAdminUser {
+  id                     String                      @id @default(dbgenerated("NEWID()"))
+  email                  String                      @unique
+  sessions               AppAdminSession[]
+  emailVerificationCodes AppEmailVerificationCodes[]
+}
+
+model AppAdminSession {
+  id        String       @id
+  expiresAt DateTime
+  userId    String
+  user      AppAdminUser @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
 model AppEmailVerificationCodes {
   id        BigInt   @id @default(autoincrement())
   code      String   @db.VarChar(8)
   expiresAt DateTime
-  userId    String
-  appUser   AppUser  @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  userId  String?
+  appUser AppUser? @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  adminUserId String?
+  adminUser   AppAdminUser? @relation(fields: [adminUserId], references: [id], onDelete: Cascade)
 }
 
 model AppFile {

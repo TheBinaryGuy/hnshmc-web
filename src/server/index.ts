@@ -1,8 +1,7 @@
-import { requiresAuth } from '@/server/middleware';
+import { adminApp } from '@/server/routes/admin';
 import { authApp } from '@/server/routes/auth';
 import { manageApp } from '@/server/routes/manage';
 import type { ContextVariables } from '@/server/types';
-import { lucia } from '@/services/auth';
 import prisma from '@/services/db';
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { apiReference } from '@scalar/hono-api-reference';
@@ -21,33 +20,6 @@ const app = new OpenAPIHono<{ Variables: ContextVariables }>();
 
 app.use(async (c, next) => {
     c.set('db', prisma);
-
-    const authHeader = c.req.header('Authorization');
-    if (!authHeader) {
-        c.set('user', null);
-        c.set('session', null);
-        return next();
-    }
-
-    const sessionId = lucia.readBearerToken(authHeader);
-    if (!sessionId) {
-        c.set('user', null);
-        c.set('session', null);
-        return next();
-    }
-
-    const { session, user } = await lucia.validateSession(sessionId);
-
-    if (session && session.fresh) {
-        c.header('sessionid', session.id);
-    }
-
-    if (!session) {
-        c.header('sessionid', '');
-    }
-
-    c.set('user', user);
-    c.set('session', session);
     return next();
 });
 
@@ -70,7 +42,7 @@ app.get('/api/health', c => {
     return c.body(null);
 });
 
-const routes = app.route('/', authApp).use(requiresAuth).route('/', manageApp);
+const routes = app.route('/', authApp).route('/', manageApp).route('/', adminApp);
 
 export type AppType = typeof routes;
 
